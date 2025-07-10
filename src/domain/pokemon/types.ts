@@ -32,3 +32,13 @@ export type PokemonSearchParms = {
     offset: number;
     search: string;
 }
+
+export type EvolutionTrigger = {
+    id: number;
+    name: string;
+    url: string;
+}
+
+export type EvolutionSearchParams = {
+    id: number;
+}

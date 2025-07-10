@@ -1,8 +1,8 @@
-import { PaginatedResponse, Pokemon, PokemonDetail, PokemonSearchParms } from "../types";
+import { EvolutionTrigger, PaginatedResponse, Pokemon, PokemonDetail, PokemonSearchParms } from "../types";
 
 
 
-const DEFAULT_PAGINATED_RESPONSE: PaginatedResponse<Pokemon> = {
+const DEFAULT_PAGINATED_RESPONSE: PaginatedResponse<never> = {
     count: 0,
     next: null,
     previous: null,
@@ -52,6 +52,16 @@ export class PokemonService {
             return data;
         } catch (error) {
             return null;
+        }
+    }
+
+    static async getEvolutionTriggers() {
+        try {
+            const res = await fetch(`${this.BASE_URL}/evolution-trigger`);
+            const data: PaginatedResponse<EvolutionTrigger> = await res.json();
+            return data;
+        } catch (error) {
+            return DEFAULT_PAGINATED_RESPONSE;
         }
     }
 }

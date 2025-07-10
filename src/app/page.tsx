@@ -18,7 +18,10 @@ export default async function Dashboard({ searchParams }: Props) {
 
   return (
     <div className="flex flex-col h-screen p-4">
-      <h1 className="text-2xl font-bold">Pokemon List</h1>
+      <div className="flex items-center justify-between py-4">
+        <h1 className="text-2xl font-bold">Pokemon List</h1>
+        <a href="/evolution-triggers" className="underline">Evolution Triggers</a>
+      </div>
       <div className="container">
         <PokemonTable data={data} currentPage={page} pageSize={limit} />
       </div>
