@@ -18,7 +18,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useState } from "react";
 import { PaginatedResponse, Pokemon } from "../../types";
+import { PokemonDetailModal } from "../pokemon-detail-modal";
 import { PaginationControl } from "./pagination-control";
 import { columns } from "./pokemon-column";
 import { SearchBar } from "./search-bar";
@@ -31,7 +33,7 @@ type Props = {
 
 export function PokemonTable({ data, currentPage, pageSize }: Props) {
     const router = useRouter();
-
+    const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
     const table = useReactTable({
         data: data.results,
         columns,
@@ -92,6 +94,7 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
+                                    onClick={() => setSelectedPokemon(row.original)}
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
@@ -116,6 +119,10 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
                     </TableBody>
                 </Table>
             </div>
+            <PokemonDetailModal
+                pokemon={selectedPokemon}
+                onClose={() => setSelectedPokemon(null)}
+            />
             <PaginationControl
                 currentPage={currentPage}
                 totalPages={Math.ceil(data.count / pageSize)}

@@ -1,4 +1,4 @@
-import { PaginatedResponse, Pokemon, PokemonSearchParms } from "../types";
+import { PaginatedResponse, Pokemon, PokemonDetail, PokemonSearchParms } from "../types";
 
 
 
@@ -10,24 +10,28 @@ const DEFAULT_PAGINATED_RESPONSE: PaginatedResponse<Pokemon> = {
 };
 
 export class PokemonService {
+    static readonly BASE_URL = "https://pokeapi.co/api/v2";
     static async getPokemons(params: PokemonSearchParms): Promise<PaginatedResponse<Pokemon>> {
         // Simulate search by name
         if (params.search) {
-            const pokemon = await this.getPokemonByName(params.search);
-            if (!pokemon) {
+            const pokemonDetail = await this.getPokemonByName(params.search);
+            if (!pokemonDetail) {
                 return DEFAULT_PAGINATED_RESPONSE; // not found
             }
             return {
                 count: 1,
                 next: null,
                 previous: null,
-                results: [pokemon],
+                results: [{
+                    name: pokemonDetail.name,
+                    url: `${this.BASE_URL}/pokemon/${pokemonDetail.id}`,
+                }],
             };
         }
 
         // Original API call
         try {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${params.limit}&offset=${params.offset}`);
+            const res = await fetch(`${this.BASE_URL}/pokemon?limit=${params.limit}&offset=${params.offset}`);
             const data: PaginatedResponse<Pokemon> = await res.json();
             return data;
         } catch (error) {
@@ -41,10 +45,10 @@ export class PokemonService {
         }
     }
 
-    static async getPokemonByName(name: string): Promise<Pokemon | null> {
+    static async getPokemonByName(name: string): Promise<PokemonDetail | null> {
         try {
-            const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-            const data: Pokemon = await res.json();
+            const res = await fetch(`${this.BASE_URL}/pokemon/${name}`);
+            const data: PokemonDetail = await res.json();
             return data;
         } catch (error) {
             return null;
