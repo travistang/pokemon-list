@@ -8,14 +8,8 @@ import {
     getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -24,10 +18,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { PaginatedResponse } from "../../service/pokemon-service";
-import { Pokemon } from "../../types";
+import { PaginatedResponse, Pokemon } from "../../types";
 import { PaginationControl } from "./pagination-control";
 import { columns } from "./pokemon-column";
+import { SearchBar } from "./search-bar";
 
 type Props = {
     data: PaginatedResponse<Pokemon>
@@ -37,7 +31,6 @@ type Props = {
 
 export function PokemonTable({ data, currentPage, pageSize }: Props) {
     const router = useRouter();
-    const searchParams = useSearchParams();
 
     const table = useReactTable({
         data: data.results,
@@ -48,10 +41,14 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
         getFilteredRowModel: getFilteredRowModel(),
     });
 
-    const createPageURL = (page: number, limit?: number) => {
-        const params = new URLSearchParams(searchParams);
+    const createPageURL = (page: number, limit?: number, search?: string) => {
+        const params = new URLSearchParams();
         params.set('page', page.toString());
         params.set('limit', (limit || pageSize).toString());
+        if (search) {
+            params.set('search', search);
+        } else {
+        }
         return `?${params.toString()}`;
     };
 
@@ -59,38 +56,14 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
         router.push(createPageURL(newPage));
     };
 
+    const handleSearch = (search: string) => {
+        router.push(createPageURL(1, pageSize, search));
+    };
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
-                <form>
-                    <Input
-                        placeholder="Search Pokemons..."
-                        className="max-w-sm"
-                    />
-                </form>
-                <div className="ml-auto flex items-center space-x-2">
-                    <DropdownMenu>
-                        <DropdownMenuContent align="end">
-                            {table
-                                .getAllColumns()
-                                .filter((column) => column.getCanHide())
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
-                                        >
-                                            {column.id}
-                                        </DropdownMenuCheckboxItem>
-                                    )
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                <SearchBar onSearch={handleSearch} />
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -108,6 +81,7 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
                                                 )}
                                         </TableHead>
                                     )
+
                                 })}
                             </TableRow>
                         ))}

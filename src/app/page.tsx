@@ -7,11 +7,14 @@ type Props = {
 }
 
 export default async function Dashboard({ searchParams }: Props) {
+  const params = await searchParams;
   const { page, limit, offset } = getPaginationParams({
-    searchParams: await searchParams
+    searchParams: params
   });
 
-  const data = await PokemonService.getPokemons(limit, offset);
+  const search = params.search as string;
+
+  const data = await PokemonService.getPokemons({ limit, offset, search });
 
   return (
     <div className="flex flex-col h-screen p-4">
