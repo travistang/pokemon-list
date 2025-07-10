@@ -50,7 +50,7 @@ export class PokemonService {
             const res = await fetch(`${this.BASE_URL}/pokemon/${name}`);
             const data: PokemonDetail = await res.json();
             return data;
-        } catch (error) {
+        } catch {
             return null;
         }
     }
@@ -60,7 +60,7 @@ export class PokemonService {
             const res = await fetch(`${this.BASE_URL}/evolution-trigger`);
             const data: PaginatedResponse<EvolutionTrigger> = await res.json();
             return data;
-        } catch (error) {
+        } catch {
             return DEFAULT_PAGINATED_RESPONSE;
         }
     }
