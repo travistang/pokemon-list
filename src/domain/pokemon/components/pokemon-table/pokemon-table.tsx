@@ -3,9 +3,6 @@
 import {
     flexRender,
     getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable
 } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
@@ -38,9 +35,6 @@ export function PokemonTable({ data, currentPage, pageSize }: Props) {
         data: data.results,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
     });
 
     const createPageURL = (page: number, limit?: number, search?: string) => {
